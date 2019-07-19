@@ -9,15 +9,15 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.List;
 
-public class ItemsReaderCsvFileWithHeaderByChunks implements ItemsReader {
-    private static final Logger logger = LoggerFactory.getLogger(ItemsReaderCsvFileWithHeaderByChunks.class);
+public class StringDataReaderCsvFileWithHeaderByChunks implements StringDataReader {
+    private static final Logger logger = LoggerFactory.getLogger(StringDataReaderCsvFileWithHeaderByChunks.class);
     private String csvFile;
     private BufferedReader input;
     private String header;
     private boolean active;
     private int chunk;
 
-    public ItemsReaderCsvFileWithHeaderByChunks(File csvFile, int chunk) throws IOException {
+    public StringDataReaderCsvFileWithHeaderByChunks(File csvFile, int chunk) throws IOException {
         this.input = new BufferedReader(new InputStreamReader(new FileInputStream(csvFile)));
         this.header = this.input.readLine() + "\n";
         this.csvFile = csvFile.getAbsolutePath();
@@ -26,7 +26,7 @@ public class ItemsReaderCsvFileWithHeaderByChunks implements ItemsReader {
     }
 
     @Override
-    public List<Item> read() throws NoMoreDataAvailable {
+    public String read() throws NoMoreDataAvailable {
         if (!active) {
             throw new NoMoreDataAvailable();
         }
@@ -44,10 +44,8 @@ public class ItemsReaderCsvFileWithHeaderByChunks implements ItemsReader {
                 }
             }
 
-            logger.error("DATA TO BE PARSED {} " , buffer.toString());
-
-            CsvClient<Item> reader = new CsvClientImpl<>(new StringReader(buffer.toString()), Item.class);
-            return reader.readBeans();
+            logger.debug("DATA TO BE HANDED ON {} " , buffer.toString());
+            return buffer.toString();
         } catch (IOException e) {
             active = false;
             logger.error("there were problems to read {}", csvFile, e);

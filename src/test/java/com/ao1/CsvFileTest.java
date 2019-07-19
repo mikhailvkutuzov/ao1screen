@@ -1,38 +1,39 @@
 package com.ao1;
 
-import com.ao1.data.Item;
-import com.ao1.reader.ItemsReaderCsvFileWithHeaderByChunks;
-import com.ao1.reader.ItemsReader;
+import com.ao1.reader.StringDataReader;
+import com.ao1.reader.StringDataReaderCsvFileWithHeaderByChunks;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class CsvFileTest {
 
     @Test
-    public void readByChunk() throws IOException, ItemsReader.NoMoreDataAvailable {
-        ItemsReader reader = new ItemsReaderCsvFileWithHeaderByChunks(new File("src/test/resources/product.csv"), 2);
+    public void readByChunk() throws IOException, StringDataReader.NoMoreDataAvailable {
+        StringDataReader reader = new StringDataReaderCsvFileWithHeaderByChunks(new File("src/test/resources/product.csv"), 2);
 
-        List<Item> items = reader.read();
+        String items = reader.read();
 
-        Assert.assertEquals(2, items.size());
-
-        items = reader.read();
-
-        Assert.assertEquals(2, items.size());
+        Assert.assertEquals(2, countCsvItems(items));
 
         items = reader.read();
 
-        Assert.assertEquals(1, items.size());
+        Assert.assertEquals(2, countCsvItems(items));
+
+        items = reader.read();
+
+        Assert.assertEquals(1, countCsvItems(items));
     }
 
+    private int countCsvItems(String data) {
+        return data.split("\n").length - 1;
+    }
 
-    @Test(expected = ItemsReader.NoMoreDataAvailable.class)
-    public void noMoreData() throws IOException, ItemsReader.NoMoreDataAvailable {
-        ItemsReader reader = new ItemsReaderCsvFileWithHeaderByChunks(new File("src/test/resources/product.csv"), 2);
+    @Test(expected = StringDataReader.NoMoreDataAvailable.class)
+    public void noMoreData() throws IOException, StringDataReader.NoMoreDataAvailable {
+        StringDataReader reader = new StringDataReaderCsvFileWithHeaderByChunks(new File("src/test/resources/product.csv"), 2);
         reader.read();
         reader.read();
         reader.read();

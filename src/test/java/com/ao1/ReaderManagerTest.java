@@ -1,11 +1,9 @@
 package com.ao1;
 
-import com.ao1.data.Item;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +23,7 @@ public class ReaderManagerTest {
     }
 
 
-    private class DMCheckForDatFed implements DividerManager {
+    private class DMCheckForDatFed implements ItemsDividerManager {
         private CountDownLatch latch;
         private int counter;
 
@@ -40,9 +38,9 @@ public class ReaderManagerTest {
         }
 
         @Override
-        public void feed(List<Item> data) throws TooMuchFood {
+        public void feed(String data) throws TooMuchFood {
             if (counter != 1) {
-                for (int i = 0; i < data.size(); i++) {
+                for (int i = 0; i < countCsvItems(data); i++) {
                     latch.countDown();
                 }
                 counter++;
@@ -51,5 +49,10 @@ public class ReaderManagerTest {
                 throw new TooMuchFood(10);
             }
         }
+
+        private int countCsvItems(String data) {
+            return data.split("\n").length - 1;
+        }
+
     }
 }

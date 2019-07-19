@@ -1,26 +1,22 @@
 package com.ao1.reader;
 
-import com.ao1.data.Item;
+public class HandsOnReservedFirstOfAll extends StringDataReaderDelegate {
+    private String reserved;
 
-import java.util.List;
-
-public class HandsOnReservedFirstOfAll extends ItemsReaderDelegate {
-    private List<Item> reserved;
-
-    public HandsOnReservedFirstOfAll(ItemsReader delegate) {
+    public HandsOnReservedFirstOfAll(StringDataReader delegate) {
         super(delegate);
     }
 
-    public void reserveForNextRead(List<Item> items) {
+    public void reserveForNextRead(String items) {
         this.reserved = items;
     }
 
     @Override
-    public List<Item> read() throws NoMoreDataAvailable {
+    public String read() throws NoMoreDataAvailable {
         if(reserved == null) {
             return super.read();
         } else {
-            List<Item> data = reserved;
+            String data = reserved;
             reserved = null;
             return data;
         }

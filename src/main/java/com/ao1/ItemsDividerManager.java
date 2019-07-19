@@ -1,14 +1,10 @@
 package com.ao1;
 
-import com.ao1.data.Item;
-
-import java.util.List;
-
-public interface DividerManager {
+public interface ItemsDividerManager {
 
     int amountOfDividers();
 
-    void feed(List<Item> data) throws TooMuchFood;
+    void feed(String data) throws TooMuchFood;
 
     class TooMuchFood extends Exception{
         public int millisecondsToWait;
