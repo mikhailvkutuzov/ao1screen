@@ -33,7 +33,7 @@ public class ReaderManagerTest {
         }
 
         @Override
-        public int amountOfDividers() {
+        public int desiredDataChunk() {
             return 3;
         }
 

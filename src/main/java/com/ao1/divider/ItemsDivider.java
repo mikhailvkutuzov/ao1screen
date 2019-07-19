@@ -1,6 +1,6 @@
 package com.ao1.divider;
 
-import com.ao1.data.Item;
+import com.ao1.data.ItemToBeRead;
 
 import java.util.List;
 
@@ -16,6 +16,6 @@ public interface ItemsDivider {
      * @param items
      * @return
      */
-    List<Item>[] divide(List<Item> items);
+    List<ItemToBeRead>[] divide(List<ItemToBeRead> items);
 
 }

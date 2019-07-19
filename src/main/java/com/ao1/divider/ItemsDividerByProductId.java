@@ -1,6 +1,6 @@
 package com.ao1.divider;
 
-import com.ao1.data.Item;
+import com.ao1.data.ItemToBeRead;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +20,15 @@ public class ItemsDividerByProductId implements ItemsDivider {
     }
 
     @Override
-    public List<Item>[] divide(List<Item> items) {
+    public List<ItemToBeRead>[] divide(List<ItemToBeRead> items) {
 
-        List<Item>[] divided = new List[amountOfConsumers];
+        List<ItemToBeRead>[] divided = new List[amountOfConsumers];
 
         for (int i = 0; i < amountOfConsumers; i++) {
             divided[i] = new ArrayList<>(2 * items.size() / amountOfConsumers);
         }
 
-        for (Item item : items) {
+        for (ItemToBeRead item : items) {
             divided[item.getProductId() % amountOfConsumers].add(item);
         }
 

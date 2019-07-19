@@ -48,7 +48,7 @@ public class ItemsReaderManager {
                 File file = files[counter];
                 try {
                     if (reader == null) {
-                        reader = new HandsOnReservedFirstOfAll(new StringDataReaderCsvFileWithHeaderByChunks(file, itemsDividerManager.amountOfDividers()));
+                        reader = new HandsOnReservedFirstOfAll(new StringDataReaderCsvFileWithHeaderByChunks(file, itemsDividerManager.desiredDataChunk()));
                         logger.debug("created a reader");
                     }
                     while (true) {

@@ -5,7 +5,16 @@ public class Item {
     private String name;
     private String condition;
     private String state;
-    private float price;
+
+    public Item() {
+    }
+
+    public Item(int productId, String name, String condition, String state) {
+        this.productId = productId;
+        this.name = name;
+        this.condition = condition;
+        this.state = state;
+    }
 
     public int getProductId() {
         return productId;
@@ -39,11 +48,13 @@ public class Item {
         this.state = state;
     }
 
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
+    @Override
+    public String toString() {
+        return "Item{" +
+                "productId=" + productId +
+                ", name='" + name + '\'' +
+                ", condition='" + condition + '\'' +
+                ", state='" + state + '\'' +
+                '}';
     }
 }

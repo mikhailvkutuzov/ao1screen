@@ -1,13 +1,9 @@
 package com.ao1.reader;
 
-import com.ao1.data.Item;
-import org.csveed.api.CsvClient;
-import org.csveed.api.CsvClientImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.List;
 
 public class StringDataReaderCsvFileWithHeaderByChunks implements StringDataReader {
     private static final Logger logger = LoggerFactory.getLogger(StringDataReaderCsvFileWithHeaderByChunks.class);
