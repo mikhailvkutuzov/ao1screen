@@ -50,9 +50,9 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
      * we can tolerate it well due to an excess of tasks is no more than conveyorsAmount.
      *
      * @param items items should be split between services and sorted later
-     * @throws TooMuchFood
+     * @throws TooMuchFood it is thrown if an amount of tasks in  progress > maxCounter
      */
-    public synchronized void feed(List<ItemToBeRead>[] items) throws TooMuchFood {
+    public synchronized void feed(List<ItemToBeSorted>[] items) throws TooMuchFood {
         if (items.length != conveyorAmount) {
             throw new IllegalArgumentException();
         }
@@ -61,7 +61,7 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
             counter.addAndGet(conveyorAmount);
             for (int i = 0; i < conveyorAmount; i++) {
                 ItemsSorter sorter = sorters[i];
-                List<ItemToBeRead> portion = items[i];
+                List<ItemToBeSorted> portion = items[i];
                 services[i].execute(() -> {
                     try {
                         sorter.sort(portion);
@@ -83,7 +83,7 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
      * exactly the situation with data. If we call sort and put some  new data in a millisecond to be sorted
      * we will get invalid results.
 
-     * @return
+     * @return finally sorted data
      * @throws NoDataReady if some pre-sorting tasks are still in progress
      */
     @Override

@@ -2,18 +2,23 @@ package com.ao1.data;
 
 import java.math.BigDecimal;
 
+/**
+ * Such {@link Item}s are used for sorting operations.
+ */
 public class ItemToBeSorted extends Item implements Comparable<ItemToBeSorted> {
     private BigDecimal price;
 
     public ItemToBeSorted() {
     }
 
-    public ItemToBeSorted(ItemToBeRead read) {
-        setCondition(read.getCondition());
-        setName(read.getName());
-        setProductId(read.getProductId());
-        setState(read.getState());
-        setPrice(new BigDecimal(read.getPrice()));
+    public ItemToBeSorted(Item item, BigDecimal price) {
+        super(item.getProductId(), item.getName(), item.getCondition(), item.getState());
+        this.price = price;
+    }
+
+    public ItemToBeSorted(int productId, String name, String condition, String state, BigDecimal price) {
+        super(productId, name, condition, state);
+        this.price = price;
     }
 
     public BigDecimal getPrice() {

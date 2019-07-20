@@ -1,6 +1,7 @@
 package com.ao1;
 
 import com.ao1.data.ItemToBeRead;
+import com.ao1.data.ItemToBeSorted;
 import com.ao1.divider.ItemsDivider;
 import org.csveed.api.CsvClient;
 import org.csveed.api.CsvClientImpl;
@@ -32,9 +33,7 @@ public class ItemsDividerManagerUponExecutor implements ItemsDividerManager {
     }
 
     /**
-     * This method returns an amount of lines of strings it is ready to digest at once.
-     *
-     * @return
+     * @return an amount of lines of strings it is ready to digest at once.
      */
     public int desiredDataChunk() {
         return linesAmount;
@@ -63,7 +62,7 @@ public class ItemsDividerManagerUponExecutor implements ItemsDividerManager {
 
             CsvClient<ItemToBeRead> reader = new CsvClientImpl<>(new StringReader(data), ItemToBeRead.class);
             List<ItemToBeRead> items = reader.readBeans();
-            List<ItemToBeRead>[] divided = divider.divide(items);
+            List<ItemToBeSorted>[] divided = divider.divide(items);
             try {
                 sorterManager.feed(divided);
             } catch (TooMuchFood tooMuchFood) {

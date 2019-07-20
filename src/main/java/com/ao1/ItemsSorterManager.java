@@ -8,8 +8,7 @@ import java.util.List;
 public interface ItemsSorterManager extends Manager {
 
     /**
-     * An amount of dedicated thread digesting the data
-     * @return
+     * @return an amount of dedicated thread digesting the data
      */
     int conveyorsAmount();
 
@@ -17,14 +16,13 @@ public interface ItemsSorterManager extends Manager {
      * To feed dedicated threads we use an array of list. The array size equals to conveyorsAmount() to let each conveyor
      * get it's own chunk of {@link ItemToBeRead}+.
      * @param items
-     * @throws TooMuchFood
+     * @throws TooMuchFood if there are too much tasks in a sorter
      */
-    void feed(List<ItemToBeRead>[] items) throws TooMuchFood;
+    void feed(List<ItemToBeSorted>[] items) throws TooMuchFood;
 
 
     /**
-     * Return
-     * @return
+     * @return sorted data
      */
     List<ItemToBeSorted> getSorted() throws NoDataReady;
 

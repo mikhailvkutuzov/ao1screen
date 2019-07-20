@@ -1,6 +1,7 @@
 package com.ao1;
 
 import com.ao1.data.ItemToBeRead;
+import com.ao1.data.ItemToBeSorted;
 import com.ao1.divider.ItemsDivider;
 import com.ao1.divider.ItemsDividerByProductId;
 import org.junit.Assert;
@@ -27,7 +28,7 @@ public class ItemsDividerTest {
             items.add(item);
         }
 
-        List<ItemToBeRead>[] result = divider.divide(items);
+        List<ItemToBeSorted>[] result = divider.divide(items);
 
         Assert.assertEquals(result.length, 3);
         Assert.assertEquals(result[0].size(), 2);

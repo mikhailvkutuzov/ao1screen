@@ -1,7 +1,9 @@
 package com.ao1.divider;
 
 import com.ao1.data.ItemToBeRead;
+import com.ao1.data.ItemToBeSorted;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +22,16 @@ public class ItemsDividerByProductId implements ItemsDivider {
     }
 
     @Override
-    public List<ItemToBeRead>[] divide(List<ItemToBeRead> items) {
+    public List<ItemToBeSorted>[] divide(List<ItemToBeRead> items) {
 
-        List<ItemToBeRead>[] divided = new List[amountOfConsumers];
+        List<ItemToBeSorted>[] divided = new List[amountOfConsumers];
 
         for (int i = 0; i < amountOfConsumers; i++) {
             divided[i] = new ArrayList<>(2 * items.size() / amountOfConsumers);
         }
 
         for (ItemToBeRead item : items) {
-            divided[item.getProductId() % amountOfConsumers].add(item);
+            divided[item.getProductId() % amountOfConsumers].add(new ItemToBeSorted(item, new BigDecimal(item.getPrice())));
         }
 
         return divided;
