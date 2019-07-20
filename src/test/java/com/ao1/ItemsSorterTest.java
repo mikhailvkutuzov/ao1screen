@@ -120,18 +120,18 @@ public class ItemsSorterTest {
 
         first.add(new ItemToBeRead(6, "6", "b", "a", "14.37"));
         first.add(new ItemToBeRead(6, "6", "b", "a", "17.37"));
-        first.add(new ItemToBeRead(6, "6", "b", "a", "6.37"));
         first.add(new ItemToBeRead(6, "6", "b", "a", "6.5"));
+        first.add(new ItemToBeRead(6, "6", "b", "a", "6.37"));
 
 
         List<ItemToBeSorted> sorted = sorter.sort(first);
 
         List<ItemToBeSorted> shouldBe = new ArrayList<>();
-        shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "6.5")));
         shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "6.37")));
+        shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "6.5")));
         shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "14.37")));
 
-        Assert.assertEquals(shouldBe.size(), first.size());
+        Assert.assertEquals(shouldBe.size(), sorted.size());
 
         for (int i = 0; i < shouldBe.size(); i++) {
             Assert.assertEquals("elements in  the " + i + "'th position are not equal ", shouldBe.get(i).getPrice(), sorted.get(i).getPrice());
@@ -142,11 +142,11 @@ public class ItemsSorterTest {
         sorter.sort(first);
 
         shouldBe = new ArrayList<>();
-        shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "6.5")));
-        shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "6.5")));
         shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "6.37")));
+        shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "6.37")));
+        shouldBe.add(new ItemToBeSorted(new ItemToBeRead(6, "6", "b", "a", "6.5")));
 
-        Assert.assertEquals(shouldBe.size(), first.size());
+        Assert.assertEquals(shouldBe.size(), sorted.size());
 
         for (int i = 0; i < shouldBe.size(); i++) {
             Assert.assertEquals("elements in  the " + i + "'th position are not equal ", shouldBe.get(i).getPrice(), sorted.get(i).getPrice());

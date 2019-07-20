@@ -12,39 +12,56 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ItemsReaderManager {
+public class ItemsReaderManager implements Manager {
     private static final Logger logger = LoggerFactory.getLogger(ItemsReaderManager.class);
 
     private ItemsDividerManager itemsDividerManager;
     private ScheduledExecutorService service;
+    private File directory;
+    private int counter;
+
 
     public ItemsReaderManager(File directory, ItemsDividerManager itemsDividerManager) {
         if (!directory.isDirectory()) {
             throw new FileHasBeenPassedInsteadOfDirectory();
         }
+        this.directory = directory;
         this.itemsDividerManager = itemsDividerManager;
         this.service = Executors.newSingleThreadScheduledExecutor();
-        File[] files = directory.listFiles((file, name) -> name.endsWith(".csv"));
+    }
 
+
+    @Override
+    public boolean haveSomeWork() {
+        return counter >= 0;
+    }
+
+    @Override
+    public void start() {
+        File[] files =  directory.listFiles((file, name) -> name.endsWith(".csv"));
+        counter = files.length - 1;
         service.execute(new FeedDividerTask(files));
+    }
+
+    @Override
+    public void stop() {
+        service.shutdown();
     }
 
     private class FeedDividerTask implements Runnable {
         private File[] files;
-        private int counter;
         private HandsOnReservedFirstOfAll reader;
 
 
         public FeedDividerTask(File[] files) {
             this.files = files;
-            this.counter = 0;
             this.reader = null;
         }
 
         @Override
         public void run() {
             logger.debug("have a new scheduled run");
-            while (counter < files.length) {
+            while (counter >= 0) {
                 File file = files[counter];
                 try {
                     if (reader == null) {
@@ -56,7 +73,7 @@ public class ItemsReaderManager {
                         try {
                             logger.debug("try to feed");
                             itemsDividerManager.feed(data);
-                        } catch (ItemsDividerManager.TooMuchFood e) {
+                        } catch (TooMuchFood e) {
                             logger.error("feeding problems, sleep for {} ms", e.millisecondsToWait);
                             reader.reserveForNextRead(data);
                             service.schedule(this, e.millisecondsToWait, TimeUnit.MILLISECONDS);
@@ -70,7 +87,7 @@ public class ItemsReaderManager {
                 }
 
                 reader = null;
-                counter++;
+                counter--;
             }
         }
     }
