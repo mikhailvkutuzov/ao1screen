@@ -1,6 +1,6 @@
 package com.ao1;
 
-public interface ItemsDividerManager extends Manager {
+public interface ItemsDividerManager {
 
     /**
      * This amount should help {@link java.io.InputStreamReader} to feed {@link ItemsDividerManager} with a
@@ -9,6 +9,11 @@ public interface ItemsDividerManager extends Manager {
      */
     int desiredDataChunk();
 
+    /**
+     *
+     * @param data
+     * @throws TooMuchFood
+     */
     void feed(String data) throws TooMuchFood;
 
 }

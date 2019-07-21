@@ -15,8 +15,7 @@ public class ReaderManagerTest {
         CountDownLatch latch = new CountDownLatch(5);
 
         DMCheckForDatFed dm = new DMCheckForDatFed(latch);
-        Manager manager = new ItemsReaderManager(new File("src/test/resources"), dm);
-        manager.start();
+        new ItemsReaderManagerCsvDirectory1Thread(new File("src/test/resources"), dm, ()->{});
 
         latch.await(5, TimeUnit.SECONDS);
 
@@ -49,21 +48,6 @@ public class ReaderManagerTest {
                 counter++;
                 throw new TooMuchFood(10);
             }
-        }
-
-        @Override
-        public boolean haveSomeWork() {
-            return latch.getCount() > 0;
-        }
-
-        @Override
-        public void start() {
-
-        }
-
-        @Override
-        public void stop() {
-
         }
 
         private int countCsvItems(String data) {

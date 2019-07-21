@@ -22,14 +22,16 @@ public class ItemsDividerManagerUponExecutor implements ItemsDividerManager {
 
     private AtomicInteger tasksInProgress;
     private int maxTasksInProgress;
+    private Runnable workDone;
 
-    public ItemsDividerManagerUponExecutor(int amountOfThreads, int linesAmount, int maxTasksInProgress, ItemsDivider divider, ItemsSorterManager sorterManager) {
+    public ItemsDividerManagerUponExecutor(int amountOfThreads, int linesAmount, int maxTasksInProgress, ItemsDivider divider, ItemsSorterManager sorterManager, Runnable workDone) {
         this.service = Executors.newScheduledThreadPool(amountOfThreads);
         this.linesAmount = linesAmount;
         this.divider = divider;
         this.sorterManager = sorterManager;
         this.maxTasksInProgress = maxTasksInProgress;
         this.tasksInProgress = new AtomicInteger(0);
+        this.workDone = workDone;
     }
 
     /**
@@ -41,11 +43,13 @@ public class ItemsDividerManagerUponExecutor implements ItemsDividerManager {
 
     @Override
     public void feed(String data) throws TooMuchFood {
-        if (!service.isShutdown() &&  tasksInProgress.incrementAndGet() < maxTasksInProgress) {
-            service.execute(new FeedSorterManager(data));
-        } else {
-            tasksInProgress.decrementAndGet();
-            throw new TooMuchFood(50);
+        if(!service.isShutdown()) {
+            if (tasksInProgress.incrementAndGet() < maxTasksInProgress) {
+                service.execute(new FeedSorterManager(data));
+            } else {
+                tasksInProgress.decrementAndGet();
+                throw new TooMuchFood(50);
+            }
         }
     }
 
@@ -72,18 +76,8 @@ public class ItemsDividerManagerUponExecutor implements ItemsDividerManager {
         }
     }
 
-    @Override
-    public boolean haveSomeWork() {
-        return tasksInProgress.incrementAndGet() > 0;
-    }
-
-    @Override
-    public void start() {
-
-    }
-
-    @Override
     public void stop() {
+        service.execute(workDone);
         service.shutdown();
     }
 }

@@ -5,7 +5,7 @@ import com.ao1.data.ItemToBeSorted;
 
 import java.util.List;
 
-public interface ItemsSorterManager extends Manager {
+public interface ItemsSorterManager {
 
     /**
      * @return an amount of dedicated thread digesting the data
@@ -22,7 +22,7 @@ public interface ItemsSorterManager extends Manager {
 
 
     /**
-     * @return sorted data
+     * @return Items sorted in an ascending order
      */
     List<ItemToBeSorted> getSorted() throws NoDataReady;
 

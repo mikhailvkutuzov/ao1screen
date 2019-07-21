@@ -1,12 +1,13 @@
 package com.ao1;
 
-import com.ao1.data.ItemToBeRead;
 import com.ao1.data.ItemToBeSorted;
 import com.ao1.sorter.ItemsSorter;
 import com.ao1.sorter.ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,20 +24,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
     private static final Logger logger = LoggerFactory.getLogger(ItemsSorterManagerStopMergeGet.class);
 
-    private ExecutorService[] services;
-    private AtomicInteger counter;
-    private ItemsSorter[] sorters;
+    private ArrayList<SorterAndExecutor> workers;
+
+    private AtomicInteger taskCounter;
 
     private int maxCounter;
     private int conveyorAmount;
     private int groupSize;
     private int sortedAmount;
 
-    public ItemsSorterManagerStopMergeGet(int conveyorsAmount, int groupSize, int sortedAmount, int maxCounter) {
+    public ItemsSorterManagerStopMergeGet(int conveyorsAmount, int groupSize, int sortedAmount, int maxPendingTasks) {
         this.conveyorAmount = conveyorsAmount;
         this.groupSize = groupSize;
         this.sortedAmount = sortedAmount;
-        this.maxCounter = maxCounter;
+        this.maxCounter = maxPendingTasks;
+
+
+        taskCounter = new AtomicInteger(0);
+        workers = new ArrayList<>(conveyorAmount);
+        for (int i = 0; i < conveyorAmount; i++) {
+            SorterAndExecutor worker = new SorterAndExecutor();
+            workers.add(worker);
+            worker.service = Executors.newSingleThreadExecutor();
+            worker.sorter = new ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData(groupSize, sortedAmount);
+        }
 
     }
 
@@ -47,29 +58,30 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
 
     /**
      * This method may sometimes lead to more than maxCounter task will be put into executors, but
-     * we can tolerate it well due to an excess of tasks is no more than conveyorsAmount.
+     * we can tolerate it well due to an excess of tasks could not be much more than conveyorAmount.
      *
      * @param items items should be split between services and sorted later
      * @throws TooMuchFood it is thrown if an amount of tasks in  progress > maxCounter
      */
-    public synchronized void feed(List<ItemToBeSorted>[] items) throws TooMuchFood {
+    public void feed(List<ItemToBeSorted>[] items) throws TooMuchFood {
         if (items.length != conveyorAmount) {
             throw new IllegalArgumentException();
         }
 
-        if (counter.get() + conveyorAmount <= maxCounter) {
-            counter.addAndGet(conveyorAmount);
+        if (taskCounter.get() + conveyorAmount <= maxCounter) {
+            taskCounter.addAndGet(conveyorAmount);
             for (int i = 0; i < conveyorAmount; i++) {
-                ItemsSorter sorter = sorters[i];
+                ItemsSorter sorter = workers.get(i).sorter;
                 List<ItemToBeSorted> portion = items[i];
-                services[i].execute(() -> {
+                workers.get(i).service.execute(() -> {
+
+                    taskCounter.decrementAndGet();
                     try {
                         sorter.sort(portion);
                     } catch (Exception e) {
                         logger.error("Could not sort some items", e);
-                    } finally {
-                        counter.decrementAndGet();
                     }
+
                 });
             }
         } else {
@@ -79,41 +91,47 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
 
 
     /**
-     * This method is dangerous and should be used from the protected piece of code knowing
-     * exactly the situation with data. If we call sort and put some  new data in a millisecond to be sorted
-     * we will get invalid results.
-
+     * Get sorted result if all the sorted tasks has been done.
+     *
+     * It is not recommended to call the task if this {@link ItemsSorterManager} is running
+     * it may lead to checked exception or worse to invalid results.
+     *
+     * The recommended way is to call it from workDone class.
+     *
      * @return finally sorted data
      * @throws NoDataReady if some pre-sorting tasks are still in progress
      */
     @Override
     public List<ItemToBeSorted> getSorted() throws NoDataReady {
-        if(haveSomeWork()) {
-            throw new NoDataReady();
+        if (taskCounter.get() != 0) {
+            throw new NoDataReady(taskCounter.get());
         }
 
-        return null;
+        ItemsSorter sorter = (ItemsSorter) workers.stream().parallel()
+                .map(p -> p.sorter)
+                .reduce((s1, s2) -> {
+                    s1.sort(s2.sort(Collections.EMPTY_LIST));
+                    return s1;
+                }).get();
+
+        return sorter.sort(Collections.EMPTY_LIST);
     }
 
-    @Override
-    public boolean haveSomeWork() {
-        return counter.get() != 0;
-    }
-
-    @Override
-    public void start() {
-        counter = new AtomicInteger(0);
-        services = new ExecutorService[conveyorAmount];
-        for (int i = 0; i < conveyorAmount; i++) {
-            services[i] = Executors.newSingleThreadExecutor();
-            sorters[i] = new ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData(groupSize, sortedAmount);
+    /**
+     * On stop signal we have to put workDone task into one of the task, due to some task might be
+     * running right know or waiting their time to be run, this way we put the last task into executor
+     * and it's execution say that data are
+     */
+    public void stop(Runnable workDone) {
+        workers.get(0).service.execute(workDone);
+        for (SorterAndExecutor worker : workers) {
+            worker.service.shutdown();
         }
     }
 
-    @Override
-    public void stop() {
-        for (ExecutorService service : services) {
-            service.shutdown();
-        }
+
+    private class SorterAndExecutor {
+        public ExecutorService service;
+        public ItemsSorter sorter;
     }
 }
