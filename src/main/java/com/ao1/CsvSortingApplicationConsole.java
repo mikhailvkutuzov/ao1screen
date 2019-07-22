@@ -1,20 +1,10 @@
 package com.ao1;
 
-import com.ao1.data.ItemToBeSorted;
-import com.ao1.divider.ItemsDividerByProductId;
 import org.apache.commons.cli.*;
-import org.csveed.api.CsvClient;
-import org.csveed.api.CsvClientImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 
-public class ApplicationSortingItemsFromCsvFiles {
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationSortingItemsFromCsvFiles.class);
-
+public class CsvSortingApplicationConsole {
     public static void main(String[] args) {
         Options options = new Options();
 
@@ -66,26 +56,9 @@ public class ApplicationSortingItemsFromCsvFiles {
 
         String linesAmountAtOnce = cmd.getOptionValue("lines");
 
-        int linesAmount = linesAtOnce == null ? 10000 : Integer.parseInt(linesAmountAtOnce);
+        int itemLinesAmount = linesAmountAtOnce == null ? 10000 : Integer.parseInt(linesAmountAtOnce);
 
-        ItemsSorterManagerStopMergeGet sorter = new ItemsSorterManagerStopMergeGet(sortingConveyorsAmount,20,1000, sortingConveyorsAmount);
-
-        ItemsDividerManagerUponExecutor divider = new ItemsDividerManagerUponExecutor(splittingConveyorsAmount,
-                linesAmount,
-                10,
-                new ItemsDividerByProductId(sorter.conveyorsAmount()),
-                sorter,
-                () -> sorter.stop(()->{
-                    try {
-                        CsvClient<ItemToBeSorted> writer = new CsvClientImpl(new BufferedReader(new FileReader(report)));
-                        writer.writeBeans(sorter.getSorted());
-                    } catch (Throwable t) {
-                        logger.error("we could not get a sorted list of items", t);
-                    }
-                    System.exit(0);
-                }));
-
-        new ItemReaderManagerCsvDirectories(directories, divider, () -> divider.stop());
+        new CsvSortingApplication().sort(report, directories, sortingConveyorsAmount, splittingConveyorsAmount, itemLinesAmount, 20, 1000);
     }
 
 }
