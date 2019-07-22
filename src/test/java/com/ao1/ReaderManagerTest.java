@@ -22,6 +22,24 @@ public class ReaderManagerTest {
         Assert.assertEquals(0, latch.getCount());
     }
 
+    @Test
+    public void readFromDirectories() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(20);
+
+        CountDownLatch finish = new CountDownLatch(1);
+
+        new ItemReaderManagerCsvDirectories(new String[]{"src/test/resources/1", "src/test/resources/2"},
+                new DMCheckForDatFed(latch), () -> finish.countDown());
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        Assert.assertEquals(0, latch.getCount());
+
+        finish.await(10, TimeUnit.SECONDS);
+
+        Assert.assertEquals(0, finish.getCount());
+
+    }
 
     private class DMCheckForDatFed implements ItemsDividerManager {
         private CountDownLatch latch;

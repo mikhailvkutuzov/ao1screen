@@ -1,6 +1,6 @@
 package com.ao1;
 
-import com.ao1.data.ItemToBeSorted;
+import com.ao1.data.Item;
 import com.ao1.sorter.ItemsSorter;
 import com.ao1.sorter.ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData;
 import org.junit.Assert;
@@ -16,24 +16,24 @@ public class ItemsSorterTest {
     public void test() {
         ItemsSorter sorter = new ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData(3, 10);
 
-        List<ItemToBeSorted> first = new ArrayList<>();
-        first.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("10.432")));//5
-        first.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("8.32")));//2
-        first.add(new ItemToBeSorted(2, "2", "b", "a", new BigDecimal("20")));//9
-        first.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("4.6")));//1
-        first.add(new ItemToBeSorted(5, "2", "b", "a", new BigDecimal("19")));//8
-        first.add(new ItemToBeSorted(3, "3", "c", "a", new BigDecimal("10.5")));//6
-        first.add(new ItemToBeSorted(2, "2", "c", "a", new BigDecimal("9.3")));//3
-        first.add(new ItemToBeSorted(3, "3", "a", "a", new BigDecimal("11.5")));//7
-        first.add(new ItemToBeSorted(2, "2", "c", "a", new BigDecimal("9.9")));//4
-        first.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("16.432")));//
-        first.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("0.5")));//0
+        List<Item> first = new ArrayList<>();
+        first.add(new Item(1, "1", "a", "a", new BigDecimal("10.432")));//5
+        first.add(new Item(1, "1", "a", "a", new BigDecimal("8.32")));//2
+        first.add(new Item(2, "2", "b", "a", new BigDecimal("20")));//9
+        first.add(new Item(1, "1", "a", "a", new BigDecimal("4.6")));//1
+        first.add(new Item(5, "2", "b", "a", new BigDecimal("19")));//8
+        first.add(new Item(3, "3", "c", "a", new BigDecimal("10.5")));//6
+        first.add(new Item(2, "2", "c", "a", new BigDecimal("9.3")));//3
+        first.add(new Item(3, "3", "a", "a", new BigDecimal("11.5")));//7
+        first.add(new Item(2, "2", "c", "a", new BigDecimal("9.9")));//4
+        first.add(new Item(1, "1", "a", "a", new BigDecimal("16.432")));//
+        first.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));//0
 
-        List<ItemToBeSorted> sorted = sorter.sort(first);
+        List<Item> sorted = sorter.sort(first);
 
         Assert.assertEquals(10, sorted.size());
 
-        List<ItemToBeSorted> shouldBe = new ArrayList<>();
+        List<Item> shouldBe = new ArrayList<>();
         shouldBe.add(first.get(10));
         shouldBe.add(first.get(3));
         shouldBe.add(first.get(1));
@@ -52,26 +52,26 @@ public class ItemsSorterTest {
         }
 
         first = new ArrayList<>();
-        first.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("11.5")));//
-        first.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("8.5"))); //
-        first.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("12.5")));
-        first.add(new ItemToBeSorted(4, "4", "c", "a", new BigDecimal("23.5")));
-        first.add(new ItemToBeSorted(4, "4", "a", "a", new BigDecimal("9.333")));//
-        first.add(new ItemToBeSorted(4, "4", "b", "a", new BigDecimal("15.565")));
+        first.add(new Item(0, "0", "a", "a", new BigDecimal("11.5")));//
+        first.add(new Item(0, "0", "a", "a", new BigDecimal("8.5"))); //
+        first.add(new Item(0, "0", "a", "a", new BigDecimal("12.5")));
+        first.add(new Item(4, "4", "c", "a", new BigDecimal("23.5")));
+        first.add(new Item(4, "4", "a", "a", new BigDecimal("9.333")));//
+        first.add(new Item(4, "4", "b", "a", new BigDecimal("15.565")));
 
         sorted = sorter.sort(first);
 
         shouldBe = new ArrayList<>();
-        shouldBe.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("0.5")));
-        shouldBe.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("4.6")));
-        shouldBe.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("8.32")));
-        shouldBe.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("8.5")));
-        shouldBe.add(new ItemToBeSorted(2, "2", "c", "a", new BigDecimal("9.3")));
-        shouldBe.add(new ItemToBeSorted(4, "4", "a", "a", new BigDecimal("9.333")));
-        shouldBe.add(new ItemToBeSorted(2, "2", "c", "a", new BigDecimal("9.9")));
-        shouldBe.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("10.432")));
-        shouldBe.add(new ItemToBeSorted(3, "3", "c", "a", new BigDecimal("10.5")));
-        shouldBe.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("11.5")));
+        shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));
+        shouldBe.add(new Item(1, "1", "a", "a", new BigDecimal("4.6")));
+        shouldBe.add(new Item(1, "1", "a", "a", new BigDecimal("8.32")));
+        shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("8.5")));
+        shouldBe.add(new Item(2, "2", "c", "a", new BigDecimal("9.3")));
+        shouldBe.add(new Item(4, "4", "a", "a", new BigDecimal("9.333")));
+        shouldBe.add(new Item(2, "2", "c", "a", new BigDecimal("9.9")));
+        shouldBe.add(new Item(1, "1", "a", "a", new BigDecimal("10.432")));
+        shouldBe.add(new Item(3, "3", "c", "a", new BigDecimal("10.5")));
+        shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("11.5")));
 
         for (int i = 0; i < shouldBe.size(); i++) {
             Assert.assertEquals("elements in  the " + i + "'th position are not equal ", shouldBe.get(i).getPrice(), sorted.get(i).getPrice());
@@ -81,27 +81,27 @@ public class ItemsSorterTest {
 
         first = new ArrayList<>();
 
-        first.add(new ItemToBeSorted(5, "5", "b", "a", new BigDecimal("17.465")));
-        first.add(new ItemToBeSorted(5, "5", "b", "a", new BigDecimal("5.565")));
-        first.add(new ItemToBeSorted(4, "4", "b", "a", new BigDecimal("15.565")));
-        first.add(new ItemToBeSorted(5, "5", "b", "a", new BigDecimal("22.37")));
-        first.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("14.37")));
-        first.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("17.37")));
-        first.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.37")));
+        first.add(new Item(5, "5", "b", "a", new BigDecimal("17.465")));
+        first.add(new Item(5, "5", "b", "a", new BigDecimal("5.565")));
+        first.add(new Item(4, "4", "b", "a", new BigDecimal("15.565")));
+        first.add(new Item(5, "5", "b", "a", new BigDecimal("22.37")));
+        first.add(new Item(6, "6", "b", "a", new BigDecimal("14.37")));
+        first.add(new Item(6, "6", "b", "a", new BigDecimal("17.37")));
+        first.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
 
         sorted = sorter.sort(first);
 
         shouldBe = new ArrayList<>();
-        shouldBe.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("0.5")));
-        shouldBe.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("4.6")));
-        shouldBe.add(new ItemToBeSorted(5, "5", "b", "a", new BigDecimal("5.565")));
-        shouldBe.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.37")));
-        shouldBe.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("8.32")));
-        shouldBe.add(new ItemToBeSorted(0, "0", "a", "a", new BigDecimal("8.5")));
-        shouldBe.add(new ItemToBeSorted(2, "2", "c", "a", new BigDecimal("9.3")));
-        shouldBe.add(new ItemToBeSorted(4, "4", "a", "a", new BigDecimal("9.333")));
-        shouldBe.add(new ItemToBeSorted(2, "2", "c", "a", new BigDecimal("9.9")));
-        shouldBe.add(new ItemToBeSorted(1, "1", "a", "a", new BigDecimal("10.432")));
+        shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));
+        shouldBe.add(new Item(1, "1", "a", "a", new BigDecimal("4.6")));
+        shouldBe.add(new Item(5, "5", "b", "a", new BigDecimal("5.565")));
+        shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
+        shouldBe.add(new Item(1, "1", "a", "a", new BigDecimal("8.32")));
+        shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("8.5")));
+        shouldBe.add(new Item(2, "2", "c", "a", new BigDecimal("9.3")));
+        shouldBe.add(new Item(4, "4", "a", "a", new BigDecimal("9.333")));
+        shouldBe.add(new Item(2, "2", "c", "a", new BigDecimal("9.9")));
+        shouldBe.add(new Item(1, "1", "a", "a", new BigDecimal("10.432")));
 
         for (int i = 0; i < shouldBe.size(); i++) {
             Assert.assertEquals("elements in  the " + i + "'th position are not equal ", shouldBe.get(i).getPrice(), sorted.get(i).getPrice());
@@ -116,20 +116,20 @@ public class ItemsSorterTest {
         ItemsSorter sorter = new ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData(3, 10);
         Assert.assertEquals(0, sorter.sort(new ArrayList<>()).size());
 
-        List<ItemToBeSorted> first = new ArrayList<>();
+        List<Item> first = new ArrayList<>();
 
-        first.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("14.37")));
-        first.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("17.37")));
-        first.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.5")));
-        first.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.37")));
+        first.add(new Item(6, "6", "b", "a", new BigDecimal("14.37")));
+        first.add(new Item(6, "6", "b", "a", new BigDecimal("17.37")));
+        first.add(new Item(6, "6", "b", "a", new BigDecimal("6.5")));
+        first.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
 
 
-        List<ItemToBeSorted> sorted = sorter.sort(first);
+        List<Item> sorted = sorter.sort(first);
 
-        List<ItemToBeSorted> shouldBe = new ArrayList<>();
-        shouldBe.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.37")));
-        shouldBe.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.5")));
-        shouldBe.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("14.37")));
+        List<Item> shouldBe = new ArrayList<>();
+        shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
+        shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.5")));
+        shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("14.37")));
 
         Assert.assertEquals(shouldBe.size(), sorted.size());
 
@@ -142,9 +142,9 @@ public class ItemsSorterTest {
         sorter.sort(first);
 
         shouldBe = new ArrayList<>();
-        shouldBe.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.37")));
-        shouldBe.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.37")));
-        shouldBe.add(new ItemToBeSorted(6, "6", "b", "a", new BigDecimal("6.5")));
+        shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
+        shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
+        shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.5")));
 
         Assert.assertEquals(shouldBe.size(), sorted.size());
 

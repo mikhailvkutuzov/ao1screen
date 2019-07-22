@@ -80,13 +80,12 @@ public class ItemsReaderManagerCsvDirectory1Thread {
             } catch (Throwable t) {
                 logger.error("an error has occurred reading csv directory {}" ,directory, t);
                 logger.error("lost csv files amount {}", counter);
-            } finally {
-                workDone.run();
             }
+            workDone.run();
         }
     }
 
-    public static class FileHasBeenPassedInsteadOfDirectory extends RuntimeException {
+    private static class FileHasBeenPassedInsteadOfDirectory extends RuntimeException {
     }
 
 }

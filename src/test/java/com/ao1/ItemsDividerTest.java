@@ -1,7 +1,6 @@
 package com.ao1;
 
-import com.ao1.data.ItemToBeRead;
-import com.ao1.data.ItemToBeSorted;
+import com.ao1.data.Item;
 import com.ao1.divider.ItemsDivider;
 import com.ao1.divider.ItemsDividerByProductId;
 import org.junit.Assert;
@@ -16,10 +15,10 @@ public class ItemsDividerTest {
     public void divide() {
         ItemsDivider divider = new ItemsDividerByProductId(3);
 
-        List<ItemToBeRead> items = new ArrayList<>(5);
+        List<Item> items = new ArrayList<>(5);
 
         for(int  i =0 ; i < 5; i++) {
-            ItemToBeRead item = new ItemToBeRead();
+            Item item = new Item();
             item.setCondition("condition" + i);
             item.setName("name" + i);
             item.setPrice(""+i);
@@ -28,7 +27,7 @@ public class ItemsDividerTest {
             items.add(item);
         }
 
-        List<ItemToBeSorted>[] result = divider.divide(items);
+        List<Item>[] result = divider.divide(items);
 
         Assert.assertEquals(result.length, 3);
         Assert.assertEquals(result[0].size(), 2);

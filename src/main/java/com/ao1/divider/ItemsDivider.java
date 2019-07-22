@@ -1,7 +1,6 @@
 package com.ao1.divider;
 
-import com.ao1.data.ItemToBeRead;
-import com.ao1.data.ItemToBeSorted;
+import com.ao1.data.Item;
 
 import java.util.List;
 
@@ -17,6 +16,6 @@ public interface ItemsDivider {
      * @param items
      * @return items are not only split but converted to a proper sorting form
      */
-    List<ItemToBeSorted>[] divide(List<ItemToBeRead> items);
+    List<Item>[] divide(List<Item> items);
 
 }

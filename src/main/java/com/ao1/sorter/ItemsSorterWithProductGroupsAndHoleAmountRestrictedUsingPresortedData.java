@@ -1,6 +1,6 @@
 package com.ao1.sorter;
 
-import com.ao1.data.ItemToBeSorted;
+import com.ao1.data.Item;
 
 import java.util.*;
 
@@ -12,11 +12,11 @@ import java.util.*;
  */
 public class ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData implements ItemsSorter {
 
-    int maxGroupSize;
-    int maxSortedSize;
+    private int maxGroupSize;
+    private int maxSortedSize;
 
-    private ArrayList<ItemToBeSorted> sorted;
-    private Map<Integer, List<ItemToBeSorted>> productGroups;
+    private ArrayList<Item> sorted;
+    private Map<Integer, List<Item>> productGroups;
 
     public ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData(int maxGroupSize, int maxSortedSize) {
         this.maxGroupSize = maxGroupSize;
@@ -26,58 +26,59 @@ public class ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedDa
     }
 
     @Override
-    public List<ItemToBeSorted> sort(List<ItemToBeSorted> items) {
+    public List<Item> sort(List<Item> items) {
         items.forEach(i -> {
-                    int indexInsertion = Collections.binarySearch(sorted, i);
-                    if (indexInsertion < 0) {
-                        indexInsertion = -(indexInsertion + 1);
-                        if (indexInsertion == maxSortedSize) {
-                            return;
-                        }
+            int indexInsertion = Collections.binarySearch(sorted, i, itemComparator);
+            if (indexInsertion < 0) {
+                indexInsertion = -(indexInsertion + 1);
+                if (indexInsertion == maxSortedSize) {
+                    return;
+                }
+            }
+            int lastIndex = lastIndexToBeErasedWithShift(i);
+
+            if (lastIndex >= 0) {
+                if (lastIndex == sorted.size()) {
+                    sorted.add(null);
+                }
+                for (int j = lastIndex - 1; j >= indexInsertion; j--) {
+                    sorted.set(j + 1, sorted.get(j));
+                }
+
+                if (sorted.size() == maxSortedSize + 1) {
+                    Item removed = sorted.remove(sorted.size() - 1);
+
+                    List<Item> group = productGroups.get(removed.getProductId());
+                    if (group.size() > 1) {
+                        group.remove(group.size() - 1);
+                    } else {
+                        productGroups.remove(removed.getProductId());
                     }
-                    int lastIndex = lastIndexToBeErasedWithShift(i);
 
-                    if(lastIndex >= 0) {
-                        if (lastIndex == sorted.size()) {
-                            sorted.add(null);
-                        }
-                        for (int j = lastIndex - 1; j >= indexInsertion; j--) {
-                            sorted.set(j + 1, sorted.get(j));
-                        }
-
-                        if (sorted.size() == maxSortedSize + 1) {
-                            ItemToBeSorted removed = sorted.remove(sorted.size() - 1);
-
-                            List<ItemToBeSorted> group = productGroups.get(removed.getProductId());
-                            if(group.size() > 1) {
-                                group.remove(group.size() - 1);
-                            } else {
-                                productGroups.remove(removed.getProductId());
-                            }
-
-                        }
-                        sorted.set(indexInsertion, i);
-                    }
-                });
+                }
+                sorted.set(indexInsertion, i);
+            }
+        });
         return sorted;
     }
 
     /**
      * Return an index of the right limit of shifted range (exclusive).
+     *
      * @param item an element to be inserted into the sorted
      * @return index >= 0 if there is a place for the item in the array
-     *               -1 if there is no place for the item (it is bigger than other items of the group
-     *         and the group size's reached the maximum)
+     * -1 if there is no place for the item (it is bigger than other items of the group
+     * and the group size's reached the maximum)
      */
-    private int lastIndexToBeErasedWithShift(ItemToBeSorted item) {
-        List<ItemToBeSorted> group = productGroups.computeIfAbsent(item.getProductId(), k -> new ArrayList<>(maxGroupSize + 1));
-        int index = Collections.binarySearch(group, item);
+    private int lastIndexToBeErasedWithShift(Item item) {
+        List<Item> group = productGroups.computeIfAbsent(item.getProductId(), k -> new ArrayList<>(maxGroupSize + 1));
+        int index = Collections.binarySearch(group, item, itemComparator);
         if (index < 0) {
             index = -(index + 1);
         }
 
         if (index == group.size()) {
-            if(group.size() != maxGroupSize) {
+            if (group.size() != maxGroupSize) {
                 group.add(item);
             } else {
                 return -1;
@@ -87,10 +88,39 @@ public class ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedDa
         }
 
         if (group.size() == maxGroupSize + 1) {
-            ItemToBeSorted removed = group.remove(maxGroupSize);
-            return Collections.binarySearch(sorted, removed);
+            Item removed = group.remove(maxGroupSize);
+            return Collections.binarySearch(sorted, removed, itemComparator);
         } else {
             return sorted.size();
         }
     }
+
+    private Comparator<Item> itemComparator = (i1, i2) -> {
+        int result = i1.getDecimalPrice().compareTo(i2.getDecimalPrice());
+
+        if (result != 0) {
+            return result;
+        } else {
+            if (i1.getProductId() > i2.getProductId()) {
+                return 1;
+            } else {
+                if (i1.getProductId() < i2.getProductId()) {
+                    return -1;
+                } else {
+                    result = i1.getName().compareTo(i2.getName());
+                    if (result != 0) {
+                        return result;
+                    } else {
+                        result = i1.getCondition().compareTo(i2.getCondition());
+                        if (result != 0) {
+                            return result;
+                        } else {
+                            return i1.getState().compareTo(i2.getState());
+                        }
+                    }
+                }
+            }
+        }
+    };
+
 }

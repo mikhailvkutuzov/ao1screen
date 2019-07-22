@@ -1,10 +1,11 @@
 package com.ao1;
 
-import com.ao1.data.ItemToBeRead;
-import com.ao1.data.ItemToBeSorted;
+import com.ao1.data.Item;
 import com.ao1.divider.ItemsDivider;
 import org.csveed.api.CsvClient;
 import org.csveed.api.CsvClientImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.StringReader;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ItemsDividerManagerUponExecutor implements ItemsDividerManager {
+    private static final Logger logger = LoggerFactory.getLogger(ItemsDividerManagerUponExecutor.class);
 
     private ScheduledExecutorService service;
     private int linesAmount;
@@ -62,16 +64,21 @@ public class ItemsDividerManagerUponExecutor implements ItemsDividerManager {
 
         @Override
         public void run() {
-            tasksInProgress.decrementAndGet();
-
-            CsvClient<ItemToBeRead> reader = new CsvClientImpl<>(new StringReader(data), ItemToBeRead.class);
-            List<ItemToBeRead> items = reader.readBeans();
-            List<ItemToBeSorted>[] divided = divider.divide(items);
             try {
-                sorterManager.feed(divided);
-            } catch (TooMuchFood tooMuchFood) {
-                tasksInProgress.incrementAndGet();
-                service.schedule(this, tooMuchFood.millisecondsToWait, TimeUnit.MILLISECONDS);
+                tasksInProgress.decrementAndGet();
+
+                CsvClient<Item> reader = new CsvClientImpl<>(new StringReader(data), Item.class);
+                reader.setUseHeader(true);
+                List<Item> items = reader.readBeans();
+                List<Item>[] divided = divider.divide(items);
+                try {
+                    sorterManager.feed(divided);
+                } catch (TooMuchFood tooMuchFood) {
+                    tasksInProgress.incrementAndGet();
+                    service.schedule(this, tooMuchFood.millisecondsToWait, TimeUnit.MILLISECONDS);
+                }
+            } catch (Throwable t) {
+                logger.error("could not fed", t);
             }
         }
     }
