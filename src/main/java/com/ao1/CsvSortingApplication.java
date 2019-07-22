@@ -35,21 +35,32 @@ public class CsvSortingApplication {
        try {
             latch.await();
             if (!report.exists()) {
-                report.createNewFile();
+                if(!report.createNewFile()) {
+                    throw new CouldNotCreateAReportFile(report.getAbsolutePath());
+                }
             }
 
            try (Writer writer = new BufferedWriter(new FileWriter(report))) {
                List<Item> items = sorter.getSorted();
-               for (Item i : items) {
-                   System.out.println("to be written" + i);
+               if(logger.isInfoEnabled()) {
+                   for (Item i : items) {
+                       logger.info("to be written {}", i);
+                   }
                }
                CsvClient<Item> client = new CsvClientImpl<>(writer, Item.class);
                client.writeBeans(items);
            }
         } catch (Throwable t) {
             logger.error("we could not get a sorted list of items", t);
+        } finally {
+           System.exit(0);
         }
+    }
 
+    private static class CouldNotCreateAReportFile extends RuntimeException {
+        public CouldNotCreateAReportFile(String message) {
+            super(message);
+        }
     }
 
 }

@@ -11,11 +11,29 @@ repositories {
     mavenCentral()
 }
 
+def log4jGroup = 'org.apache.logging.log4j'
+def log4jVersion = '2.10.0'
+
+
 dependencies {
     compile group: 'org.csveed', name: 'csveed', version: '0.4.0'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.2'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
+    compile group: log4jGroup, name: 'log4j-slf4j-impl', version: log4jVersion
+    compile group: log4jGroup, name: 'log4j-1.2-api', version: log4jVersion
+    compile group: log4jGroup, name: 'log4j-api', version:  log4jVersion
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.ao1.CsvSortingApplicationConsole"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

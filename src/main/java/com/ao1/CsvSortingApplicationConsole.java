@@ -17,13 +17,13 @@ public class CsvSortingApplicationConsole {
         output.setRequired(true);
         options.addOption(output);
 
-        Option linesAtOnce = new Option("l", "lines", true, "an amount of csv lines to be consumed at once(default = 1000)");
-        linesAtOnce.setRequired(false);
-        options.addOption(linesAtOnce);
+        Option linesReadAtOnce = new Option("l", "lines", true, "an amount of csv lines to be consumed at once(default = 1000)");
+        linesReadAtOnce.setRequired(false);
+        options.addOption(linesReadAtOnce);
 
-        Option splitters = new Option("s", "splitters", true, "an amount of threads for data serialization and splitting");
-        splitters.setRequired(false);
-        options.addOption(splitters);
+        Option dividers = new Option("ss", "splitters", true, "an amount of threads for data serialization and splitting");
+        dividers.setRequired(false);
+        options.addOption(dividers);
 
         Option sorters = new Option("s", "sorters", true, "an amount of threads for data sorting");
         sorters.setRequired(false);
@@ -46,9 +46,9 @@ public class CsvSortingApplicationConsole {
 
         File report = new File(cmd.getOptionValue("report"));
 
-        String splittersAmount = cmd.getOptionValue("splitters");
+        String dividersAmount = cmd.getOptionValue("splitters");
 
-        int splittingConveyorsAmount = splittersAmount == null ? 1 : Integer.parseInt(splittersAmount);
+        int dividingConveyorsAmount = dividersAmount == null ? 1 : Integer.parseInt(dividersAmount);
 
         String sortersAmount = cmd.getOptionValue("sorters");
 
@@ -58,7 +58,7 @@ public class CsvSortingApplicationConsole {
 
         int itemLinesAmount = linesAmountAtOnce == null ? 10000 : Integer.parseInt(linesAmountAtOnce);
 
-        new CsvSortingApplication().sort(report, directories, sortingConveyorsAmount, splittingConveyorsAmount, itemLinesAmount, 20, 1000);
+        new CsvSortingApplication().sort(report, directories, sortingConveyorsAmount, dividingConveyorsAmount, itemLinesAmount, 20, 1000);
     }
 
 }

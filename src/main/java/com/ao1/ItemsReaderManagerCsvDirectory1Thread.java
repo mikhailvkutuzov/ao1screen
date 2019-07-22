@@ -23,7 +23,7 @@ public class ItemsReaderManagerCsvDirectory1Thread {
 
     public ItemsReaderManagerCsvDirectory1Thread(File directory, ItemsDividerManager itemsDividerManager, Runnable workDone) {
         if (!directory.isDirectory()) {
-            throw new FileHasBeenPassedInsteadOfDirectory();
+            throw new FileHasBeenPassedInsteadOfDirectory(directory.getAbsolutePath());
         }
         this.directory = directory;
         this.itemsDividerManager = itemsDividerManager;
@@ -86,6 +86,10 @@ public class ItemsReaderManagerCsvDirectory1Thread {
     }
 
     private static class FileHasBeenPassedInsteadOfDirectory extends RuntimeException {
+
+        public FileHasBeenPassedInsteadOfDirectory(String message) {
+            super(message);
+        }
     }
 
 }

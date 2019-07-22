@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +117,7 @@ public class SortingApplicationTest {
 
 
     @Test
-    public void writeDownResults() throws InterruptedException, IOException, NoDataReady {
+    public void writeDownResults() throws InterruptedException {
 
         File report = new File("src/test/resources/results/report.csv");
 
