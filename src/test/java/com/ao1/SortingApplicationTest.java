@@ -2,8 +2,6 @@ package com.ao1;
 
 import com.ao1.data.Item;
 import com.ao1.divider.ItemsDividerByProductId;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class SortingApplicationTest {
 
@@ -129,10 +126,10 @@ public class SortingApplicationTest {
 
         new CsvSortingApplication()
                 .sort(report,
-                        new String[]{"src/test/resources/1", "src/test/resources/1"},
+                        new String[]{"src/test/resources/1", "src/test/resources/2"},
                         2,
                         1,
-                        3,
+                        5,
                         2,
                         5);
 
