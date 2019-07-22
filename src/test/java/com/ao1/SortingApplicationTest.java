@@ -123,7 +123,7 @@ public class SortingApplicationTest {
     @Test
     public void writeDownResults() throws InterruptedException, IOException, NoDataReady {
 
-        File report = new File("src/test/resources/report.csv");
+        File report = new File("src/test/resources/results/report.csv");
 
         report.delete();
 
