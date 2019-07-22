@@ -8,7 +8,7 @@ public class CsvSortingApplicationConsole {
     public static void main(String[] args) {
         Options options = new Options();
 
-        Option input = new Option("d", "directories", true, "a set of directories comma separated");
+        Option input = new Option("d", "directories", true, "a directory containing csv files to be read (You could use this parameter several times if You have several directories)");
         input.setRequired(true);
         input.setValueSeparator(',');
         options.addOption(input);
@@ -17,15 +17,15 @@ public class CsvSortingApplicationConsole {
         output.setRequired(true);
         options.addOption(output);
 
-        Option linesReadAtOnce = new Option("l", "lines", true, "an amount of csv lines to be consumed at once(default = 1000)");
+        Option linesReadAtOnce = new Option("l", "lines", true, "an amount of csv lines to be consumed at once (default = 1000)");
         linesReadAtOnce.setRequired(false);
         options.addOption(linesReadAtOnce);
 
-        Option dividers = new Option("ss", "splitters", true, "an amount of threads for data serialization and splitting");
+        Option dividers = new Option("ss", "splitters", true, "an amount of threads for data serialization and splitting (default = 1) ");
         dividers.setRequired(false);
         options.addOption(dividers);
 
-        Option sorters = new Option("s", "sorters", true, "an amount of threads for data sorting");
+        Option sorters = new Option("s", "sorters", true, "an amount of threads for data sorting (default = 1)");
         sorters.setRequired(false);
         options.addOption(sorters);
 
