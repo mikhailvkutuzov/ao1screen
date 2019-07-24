@@ -10,7 +10,7 @@ import java.util.*;
  * 0. no more than maxGroupSize items of the same  product type should be presented
  * 1. no more than maxSortedSize items should be presented at all
  */
-public class ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData implements ItemsSorter {
+public class ItemsSorterProductGroupsRestrictedAmountInsertsIntoSorted implements ItemsSorter {
 
     private int maxGroupSize;
     private int maxSortedSize;
@@ -18,7 +18,7 @@ public class ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedDa
     private ArrayList<Item> sorted;
     private Map<Integer, List<Item>> productGroups;
 
-    public ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData(int maxGroupSize, int maxSortedSize) {
+    public ItemsSorterProductGroupsRestrictedAmountInsertsIntoSorted(int maxGroupSize, int maxSortedSize) {
         this.maxGroupSize = maxGroupSize;
         this.maxSortedSize = maxSortedSize;
         this.sorted = new ArrayList<>(maxSortedSize + 1);
@@ -26,7 +26,7 @@ public class ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedDa
     }
 
     @Override
-    public List<Item> sort(List<Item> items) {
+    public List<Item> sort(final List<Item> items) {
         items.forEach(i -> {
             int indexInsertion = Collections.binarySearch(sorted, i, itemComparator);
             if (indexInsertion < 0) {
@@ -94,33 +94,4 @@ public class ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedDa
             return sorted.size();
         }
     }
-
-    private Comparator<Item> itemComparator = (i1, i2) -> {
-        int result = i1.getDecimalPrice().compareTo(i2.getDecimalPrice());
-
-        if (result != 0) {
-            return result;
-        } else {
-            if (i1.getProductId() > i2.getProductId()) {
-                return 1;
-            } else {
-                if (i1.getProductId() < i2.getProductId()) {
-                    return -1;
-                } else {
-                    result = i1.getName().compareTo(i2.getName());
-                    if (result != 0) {
-                        return result;
-                    } else {
-                        result = i1.getCondition().compareTo(i2.getCondition());
-                        if (result != 0) {
-                            return result;
-                        } else {
-                            return i1.getState().compareTo(i2.getState());
-                        }
-                    }
-                }
-            }
-        }
-    };
-
 }

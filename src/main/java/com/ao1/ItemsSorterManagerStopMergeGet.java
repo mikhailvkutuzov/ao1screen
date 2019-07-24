@@ -2,7 +2,8 @@ package com.ao1;
 
 import com.ao1.data.Item;
 import com.ao1.sorter.ItemsSorter;
-import com.ao1.sorter.ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData;
+import com.ao1.sorter.ItemsSorterProductGroupsRestrictedAmountInsertsIntoSorted;
+import com.ao1.sorter.ItemsSorterProductGroupsRestrictedAmountMergeSorted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 
 /**
@@ -47,7 +47,7 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
             SorterAndExecutor worker = new SorterAndExecutor();
             workers.add(worker);
             worker.service = Executors.newSingleThreadScheduledExecutor();
-            worker.sorter = new ItemsSorterWithProductGroupsAndHoleAmountRestrictedUsingPresortedData(groupSize, sortedAmount);
+            worker.sorter = new ItemsSorterProductGroupsRestrictedAmountMergeSorted(groupSize, sortedAmount);
         }
     }
 
@@ -139,7 +139,7 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
         Runnable workDone;
         ScheduledExecutorService service;
 
-        public StoppingTask(Runnable workDone, ScheduledExecutorService service) {
+        StoppingTask(Runnable workDone, ScheduledExecutorService service) {
             this.workDone = workDone;
             this.service = service;
         }
@@ -156,7 +156,7 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
 
 
     private class SorterAndExecutor {
-        public ScheduledExecutorService service;
-        public ItemsSorter sorter;
+        ScheduledExecutorService service;
+        ItemsSorter sorter;
     }
 }
