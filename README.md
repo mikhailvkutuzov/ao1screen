@@ -1,6 +1,12 @@
 # ao1screen
 a screening  project for ao1 solution
 
+an idea is to have 3 separate phases:
+   * read csv files from a directory. only one thread reads data from the directory. if you have data on N devices it is possible to read from that N devices using exactly N threads. 
+   * serialize csv strings into Items and split them on groups according to their productId. there could be as many threads as you want.
+   * sort the groups in separate threads. every group should be confined to some thread. every thread have no more than 1000 Items sorted. 
+   * merge results
+
 How can You sort csv data using this project?
 
 0. be sure You have Java 8 sdk installed on your system (it would be better to have a Gradle as well =))
