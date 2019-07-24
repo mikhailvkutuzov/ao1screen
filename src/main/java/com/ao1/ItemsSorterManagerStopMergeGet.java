@@ -2,19 +2,18 @@ package com.ao1;
 
 import com.ao1.data.Item;
 import com.ao1.sorter.ItemsSorter;
-import com.ao1.sorter.ItemsSorterProductGroupsRestrictedAmountInsertsIntoSorted;
 import com.ao1.sorter.ItemsSorterProductGroupsRestrictedAmountMergeSorted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 
 /**
@@ -78,7 +77,7 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
                         taskCounter.decrementAndGet();
                         try {
                             sorter.sort(portion);
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             logger.error("Could not sort some items", e);
                         }
                     });
@@ -118,15 +117,18 @@ public class ItemsSorterManagerStopMergeGet implements ItemsSorterManager {
         ItemsSorter sorter = workers.stream().parallel()
                 .map(p -> p.sorter)
                 .reduce((s1, s2) -> {
-                    List<Item> l = s2.sort(Collections.EMPTY_LIST);
-                    logger.info(" sorted items {}" , l.size());
+                    List<Item> l = s2.sort(new ArrayList<>(0));
+                    if(logger.isInfoEnabled()){
+                        logger.info(" sorted items {}: {}" , l.size(), l.stream().map(j -> j.toString()).collect(Collectors.joining(",")));
+                    }
                     l = s1.sort(l);
-                    logger.info(" sorted items {}" , l.size());
-
+                    if(logger.isInfoEnabled()){
+                        logger.info(" sorted items {}: {}" , l.size(), l.stream().map(j -> j.toString()).collect(Collectors.joining(",")));
+                    }
                     return s1;
                 }).get();
 
-        return sorter.sort(Collections.EMPTY_LIST);
+        return sorter.sort(new ArrayList<>(0));
     }
 
     public void stop(Runnable workDone) {

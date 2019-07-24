@@ -30,7 +30,7 @@ public class ItemsSorterTest {
         first.add(new Item(1, "1", "a", "a", new BigDecimal("16.432")));//
         first.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));//0
 
-        List<Item> sorted = sorter.sort(new ArrayList<>(first));
+        List<Item> sorted = sorter.sort(first);
 
         Assert.assertEquals(10, sorted.size());
 
@@ -60,7 +60,7 @@ public class ItemsSorterTest {
         first.add(new Item(4, "4", "a", "a", new BigDecimal("9.333")));//
         first.add(new Item(4, "4", "b", "a", new BigDecimal("15.565")));
 
-        sorted = sorter.sort(new ArrayList<>(first));
+        sorted = sorter.sort(first);
 
         shouldBe = new ArrayList<>();
         shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));
@@ -90,7 +90,7 @@ public class ItemsSorterTest {
         first.add(new Item(6, "6", "b", "a", new BigDecimal("17.37")));
         first.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
 
-        sorted = sorter.sort(new ArrayList<>(first));
+        sorted = sorter.sort(first);
 
         shouldBe = new ArrayList<>();
         shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));
@@ -125,7 +125,7 @@ public class ItemsSorterTest {
         first.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
 
 
-        List<Item> sorted = sorter.sort(new ArrayList<>(first));
+        List<Item> sorted = sorter.sort(first);
 
         List<Item> shouldBe = new ArrayList<>();
         shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
@@ -140,7 +140,7 @@ public class ItemsSorterTest {
             Assert.assertEquals("elements in  the " + i + "'th position are not equal ", shouldBe.get(i).getName(), sorted.get(i).getName());
         }
 
-        sorter.sort(new ArrayList<>(first));
+        sorter.sort(first);
 
         shouldBe = new ArrayList<>();
         shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
@@ -176,7 +176,7 @@ public class ItemsSorterTest {
         first.add(new Item(1, "1", "a", "a", new BigDecimal("16.432")));//
         first.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));//0
 
-        List<Item> sorted = sorter.sort(new ArrayList<>(first));
+        List<Item> sorted = sorter.sort(first);
 
         Assert.assertEquals(10, sorted.size());
 
@@ -206,7 +206,7 @@ public class ItemsSorterTest {
         first.add(new Item(4, "4", "a", "a", new BigDecimal("9.333")));//
         first.add(new Item(4, "4", "b", "a", new BigDecimal("15.565")));
 
-        sorted = sorter.sort(new ArrayList<>(first));
+        sorted = sorter.sort(first);
 
         shouldBe = new ArrayList<>();
         shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));
@@ -236,7 +236,7 @@ public class ItemsSorterTest {
         first.add(new Item(6, "6", "b", "a", new BigDecimal("17.37")));
         first.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
 
-        sorted = sorter.sort(new ArrayList<>(first));
+        sorted = sorter.sort(first);
 
         shouldBe = new ArrayList<>();
         shouldBe.add(new Item(0, "0", "a", "a", new BigDecimal("0.5")));
@@ -271,7 +271,7 @@ public class ItemsSorterTest {
         first.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
 
 
-        List<Item> sorted = sorter.sort(new ArrayList<>(first));
+        List<Item> sorted = sorter.sort(first);
 
         List<Item> shouldBe = new ArrayList<>();
         shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));
@@ -286,7 +286,7 @@ public class ItemsSorterTest {
             Assert.assertEquals("elements in  the " + i + "'th position are not equal ", shouldBe.get(i).getName(), sorted.get(i).getName());
         }
 
-        sorter.sort(new ArrayList<>(first));
+        sorter.sort(first);
 
         shouldBe = new ArrayList<>();
         shouldBe.add(new Item(6, "6", "b", "a", new BigDecimal("6.37")));

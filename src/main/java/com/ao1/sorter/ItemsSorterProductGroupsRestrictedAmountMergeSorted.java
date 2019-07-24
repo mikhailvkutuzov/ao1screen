@@ -1,44 +1,55 @@
 package com.ao1.sorter;
 
 import com.ao1.data.Item;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
  * This realisation of {@link ItemsSorter} uses sorted data from the previous call and merge them with
  * sorted data of the current call due to one comparator used to sort both of lists we may merge these lists
- * with O((maxSortedSize + items.size())*log(maxSortedSize)) which leads us eventually to O(n*log(maxSortedSize))
+ * with O((maxReportSize + items.size())*log(maxReportSize)) which leads us eventually to O(n*log(maxReportSize))
  * where n is an amount of Items handed on into this class.
- *
+ * <p>
  * It also does not allow to have more than maxProductSize of any Item with the same productId
- * as well as restricts an amount of data returned by sort(List<Item>) operation with maxSortedSize.
+ * as well as restricts an amount of data returned by sort(List<Item>) operation with maxReportSize.
  */
 public class ItemsSorterProductGroupsRestrictedAmountMergeSorted implements ItemsSorter {
+    private static final Logger logger = LoggerFactory.getLogger(ItemsSorterProductGroupsRestrictedAmountMergeSorted.class);
 
     private int maxProductSize;
-    private int maxSortedSize;
+    private int maxReportSize;
     private ArrayList<Item> sorted;
 
-    public ItemsSorterProductGroupsRestrictedAmountMergeSorted(int maxProductSize, int maxSortedSize) {
+    public ItemsSorterProductGroupsRestrictedAmountMergeSorted(int maxProductSize, int maxReportSize) {
         this.maxProductSize = maxProductSize;
-        this.maxSortedSize = maxSortedSize;
+        this.maxReportSize = maxReportSize;
         this.sorted = new ArrayList<>();
 
     }
 
     @Override
-    public List<Item> sort(List<Item> items) {
-        Map<Integer, ProductSize> productGroups = new HashMap<>(maxSortedSize);
+    public List<Item> sort(List<Item> incomingItems) {
+
+        List<Item> items = new ArrayList<>(incomingItems);
+
+        if (logger.isInfoEnabled()) {
+            logger.info("input for {} : {}", this, items.stream().map(i -> i.toString()).collect(Collectors.joining(",")));
+        }
+
+        Map<Integer, ProductSize> productGroups = new HashMap<>(maxReportSize);
         items.sort(itemComparator);
 
-        ArrayList<Item> result = new ArrayList<>(maxSortedSize);
+        ArrayList<Item> result = new ArrayList<>(maxReportSize);
 
         int sortedIndex = 0;
         Iterator<Item> itemsIterator = items.iterator();
         Item iValue = null;
 
-        while (result.size() < maxSortedSize && itemsIterator.hasNext() && sortedIndex < sorted.size()) {
+        while (result.size() < maxReportSize && itemsIterator.hasNext() && sortedIndex < sorted.size()) {
             iValue = iValue == null ? itemsIterator.next() : iValue;
 
             Item sValue = sorted.get(sortedIndex);
@@ -59,7 +70,7 @@ public class ItemsSorterProductGroupsRestrictedAmountMergeSorted implements Item
             }
         }
 
-        if (result.size() != maxSortedSize) {
+        if (result.size() != maxReportSize) {
             if (sortedIndex == sorted.size()) {
                 if (itemsIterator.hasNext()) {
                     Item item = iValue == null ? itemsIterator.next() : iValue;
@@ -72,7 +83,7 @@ public class ItemsSorterProductGroupsRestrictedAmountMergeSorted implements Item
                         } else {
                             break;
                         }
-                    } while (result.size() < maxSortedSize);
+                    } while (result.size() < maxReportSize);
                 }
             } else {
                 do {
@@ -81,10 +92,14 @@ public class ItemsSorterProductGroupsRestrictedAmountMergeSorted implements Item
                         result.add(item);
                     }
                     sortedIndex++;
-                } while (result.size() < maxProductSize && sortedIndex < sorted.size());
+                } while (result.size() < maxReportSize && sortedIndex < sorted.size());
             }
         }
         sorted = result;
+
+        if (logger.isInfoEnabled()) {
+            logger.info("output from {} : {}", this, items.stream().map(i -> i.toString()).collect(Collectors.joining(",")));
+        }
         return sorted;
     }
 

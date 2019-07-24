@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ItemsSorter {
 
-    List<Item> sort(List<Item> items);
+    List<Item> sort(final List<Item> items);
 
     Comparator<Item> itemComparator = (i1, i2) -> {
         int result = i1.getDecimalPrice().compareTo(i2.getDecimalPrice());

@@ -1,8 +1,11 @@
 package com.ao1.sorter;
 
 import com.ao1.data.Item;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Take previously sorted items and sort the new ones together with them.
@@ -11,6 +14,7 @@ import java.util.*;
  * 1. no more than maxSortedSize items should be presented at all
  */
 public class ItemsSorterProductGroupsRestrictedAmountInsertsIntoSorted implements ItemsSorter {
+    private static final Logger logger = LoggerFactory.getLogger(ItemsSorterProductGroupsRestrictedAmountInsertsIntoSorted.class);
 
     private int maxGroupSize;
     private int maxSortedSize;
@@ -26,7 +30,15 @@ public class ItemsSorterProductGroupsRestrictedAmountInsertsIntoSorted implement
     }
 
     @Override
-    public List<Item> sort(final List<Item> items) {
+    public List<Item> sort(final List<Item> incomingItems) {
+
+        List<Item> items = new ArrayList<>(incomingItems);
+
+        if (logger.isInfoEnabled()) {
+            logger.info("input for {} : {}", this, items.stream().map(i -> i.toString()).collect(Collectors.joining(",")));
+        }
+
+
         items.forEach(i -> {
             int indexInsertion = Collections.binarySearch(sorted, i, itemComparator);
             if (indexInsertion < 0) {
@@ -59,6 +71,9 @@ public class ItemsSorterProductGroupsRestrictedAmountInsertsIntoSorted implement
                 sorted.set(indexInsertion, i);
             }
         });
+        if (logger.isInfoEnabled()) {
+            logger.info("input for {} : {}", this, sorted.stream().map(i -> i.toString()).collect(Collectors.joining(",")));
+        }
         return sorted;
     }
 
